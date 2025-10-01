@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AllGoodDrivers – Scheduling</title>
+  <!-- Fonts & CSS pulled from live site -->
+  <link rel="stylesheet" href="https://img1.wsimg.com/blobby/go/css/site.css" />
+  <link rel="stylesheet" href="https://img1.wsimg.com/blobby/go/css/app.css" />
+  <link rel="stylesheet" href="https://img1.wsimg.com/blobby/go/fonts.googleapis.com/css?family=Open+Sans:400,600,700" />
+  <style>
+    /* Optional overrides for your custom content */
+    main {
+      padding: 2rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Nav -->
+  <header>
+    <div id="site-header">
+      <div class="logo">
+        <a href="https://allgooddrivers.com">
+          <img src="https://allgooddrivers.com/-/media/5c0d8f21c8ad48d68ef1c837e8a24aa0.ashx" alt="AllGoodDrivers Logo" />
+        </a>
+      </div>
+      <nav id="site-nav">
+        <ul>
+          <li><a href="https://allgooddrivers.com">Home</a></li>
+          <li><a href="https://allgooddrivers.com/about">About</a></li>
+          <li><a href="https://allgooddrivers.com/services">Services</a></li>
+          <li><a href="https://allgooddrivers.com/scheduling-%26-availability">Scheduling</a></li>
+          <li><a href="https://allgooddrivers.com/contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content area -->
+  <main>
+    <h1>Schedule Your Lesson</h1>
+    <p>This is a placeholder section. Here we’ll add the zone-picker: an address input that finds your zone and routes you into TimeTap.</p>
+    <div id="zone-picker"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div id="site-footer">
+      <p>&copy; <span id="year"></span> AllGoodDrivers. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts pulled from live site -->
+  <script src="https://img1.wsimg.com/blobby/go/js/site.js"></script>
+  <script>
+    // Small helper to keep year updated
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
