@@ -1,0 +1,22 @@
+<input id="address-field" type="text" placeholder="Enter your address" style="width: 100%; padding: 8px; font-size: 16px;" />
+
+<!-- Load Google Maps Places API with callback -->
+<script>
+  function initAutocomplete() {
+    const input = document.getElementById("address-field");
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ['geocode'],
+      componentRestrictions: { country: "us" }
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.formatted_address) return;
+      console.log("Selected address:", place.formatted_address);
+    });
+  }
+</script>
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtklfypwHFIFRNGCcqNlPy9iVPv_L_pvI&libraries=places&callback=initAutocomplete">
+</script>
