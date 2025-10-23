@@ -1,22 +1,111 @@
-<input id="address-field" type="text" placeholder="Enter your address" style="width: 100%; padding: 8px; font-size: 16px;" />
+<div style="display: flex; flex-direction: column; gap: 12px; width: 100%; padding: 40px;">
+
+  <div style="margin-bottom: 20px">
+    <label for="pickup-field" style="display: block; margin-bottom: 4px; font-family: Share, arial, sans-serif;">Pickup Location</label>
+    <input id="pickup-field" type="text" placeholder="Enter your pickup address"
+      style="width: 100%; padding: 8px; font-size: 16px;" />
+  </div>
+
+  <div style="margin-bottom: 20px">
+    <label for="dropoff-field" style="display: block; margin-bottom: 4px; font-family: Share, arial, sans-serif;">Dropoff Location</label>
+    <input id="dropoff-field" type="text" placeholder="Enter your dropoff address"
+      style="width: 100%; padding: 8px; font-size: 16px;" />
+  </div>
+
+  <div id="result">
+    <p id="message" style="margin-bottom: 4px; font-family: Share, arial, sans-serif;">
+      Please select a pickup and dropoff location
+    </p>
+  </div>
+
+</div>
 
 <!-- Load Google Maps Places API with callback -->
 <script>
-  function initAutocomplete() {
-    const input = document.getElementById("address-field");
-    const autocomplete = new google.maps.places.Autocomplete(input, {
-      types: ['geocode'],
-      componentRestrictions: { country: "us" }
-    });
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (!place.formatted_address) return;
-      console.log("Selected address:", place.formatted_address);
-    });
+let zonePolygons = {};
+
+  // Replace with your actual GitHub raw URL
+  const ZONE_JSON_URL = 'https://raw.githubusercontent.com/Tanisyr/allgooddrivers/main/area_maps.json';
+
+  function initAutocomplete() {
+    
+    function updateMessage() {
+      const pickupZone = document.getElementById("pickup-field").getAttribute("zone");
+      const dropoffZone = document.getElementById("dropoff-field").getAttribute("zone");
+      const messageElement = document.getElementById("message");
+
+      if(pickupZone && dropoffZone) {
+        if(pickupZone == dropoffZone) {
+          messageElement.innerHTML = `Your zone is ${pickupZone}`;
+        }
+        else {
+          messageElement.innerHTML = "Pickup and dropoff zones are different. Please select a pickup and dropoff location in the same zone"
+        }
+      } 
+      else {
+        message.innerHTML = "Please select a pickup and dropoff location"
+      }
+
+    }
+
+    function registerAutocomplete(id) {
+      const input = document.getElementById(id);
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: "us" }
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place.formatted_address) return;
+        console.log("Place:", place)
+        console.log("Selected address:", place.formatted_address);
+        const zone = getZone(place);
+        input.setAttribute("zone", zone);
+        console.log("Zone:", zone);
+        updateMessage();
+      });
+    }
+
+    registerAutocomplete("pickup-field");
+    registerAutocomplete("dropoff-field");
   }
+
+  async function loadZones() {
+    try {
+      const res = await fetch(ZONE_JSON_URL);
+      const geojson = await res.json();
+
+      // Convert GeoJSON features into a dictionary of named polygons
+      geojson.features.forEach((feature) => {
+        const name = feature.properties.name || feature.properties.Zone || "Unnamed";
+        const coords = feature.geometry.coordinates[0]; // Assumes Polygon
+        zonePolygons[name] = coords.map(([lng, lat]) => ({ lat, lng }));
+      });
+
+      console.log("Loaded zone polygons:", zonePolygons);
+    } catch (err) {
+      console.error("Error loading zone data:", err);
+    }
+  }
+
+  function getZone(place) {
+    const point = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng());
+    for (const [zoneName, polygonPoints] of Object.entries(zonePolygons)) {
+      const polygon = new google.maps.Polygon({ paths: polygonPoints });
+      if (google.maps.geometry.poly.containsLocation(point, polygon)) {
+        console.log("Matched zone:", zoneName);
+        return zoneName;
+      }
+    }
+    return null;
+  }
+
+  window.addEventListener("load", loadZones);
+
 </script>
 
+
 <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtklfypwHFIFRNGCcqNlPy9iVPv_L_pvI&libraries=places&callback=initAutocomplete">
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtklfypwHFIFRNGCcqNlPy9iVPv_L_pvI&libraries=places,geometry&callback=initAutocomplete">
 </script>
